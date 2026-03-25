@@ -59,10 +59,20 @@ async function create({ id_proyecto, nombre, meta, fecha_inicio, fecha_fin, velo
 }
 
 async function update(id_sprint, { nombre, meta, fecha_inicio, fecha_fin, velocidad_estimada }) {
+  const actual = await findById(id_sprint);
+  if (!actual) return null;
+
   await pool.query(
     `UPDATE sprint SET nombre=?, meta=?, fecha_inicio=?, fecha_fin=?, velocidad_estimada=?
      WHERE id_sprint = ?`,
-    [nombre, meta, fecha_inicio, fecha_fin, velocidad_estimada, id_sprint]
+    [
+      nombre ?? actual.nombre,
+      meta ?? actual.meta,
+      fecha_inicio ?? actual.fecha_inicio,
+      fecha_fin ?? actual.fecha_fin,
+      velocidad_estimada ?? actual.velocidad_estimada,
+      id_sprint,
+    ]
   );
   return findById(id_sprint);
 }

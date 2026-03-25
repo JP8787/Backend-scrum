@@ -38,10 +38,20 @@ async function create({ id_proyecto, nombre, descripcion, categoria, prioridad }
 }
 
 async function update(id_epica, { nombre, descripcion, categoria, prioridad, estado }) {
+  const actual = await findById(id_epica);
+  if (!actual) return null;
+
   await pool.query(
     `UPDATE epica SET nombre=?, descripcion=?, categoria=?, prioridad=?, estado=?
      WHERE id_epica = ?`,
-    [nombre, descripcion, categoria, prioridad, estado, id_epica]
+    [
+      nombre ?? actual.nombre,
+      descripcion ?? actual.descripcion,
+      categoria ?? actual.categoria,
+      prioridad ?? actual.prioridad,
+      estado ?? actual.estado,
+      id_epica,
+    ]
   );
   return findById(id_epica);
 }

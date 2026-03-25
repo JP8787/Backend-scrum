@@ -86,6 +86,9 @@ async function create(datos) {
 }
 
 async function update(id_tarea, datos) {
+  const actual = await findById(id_tarea);
+  if (!actual) return null;
+
   const { nombre, descripcion, tipo, prioridad,
           story_points, estimacion_dias, fecha_inicio, fecha_fin_est } = datos;
 
@@ -94,9 +97,17 @@ async function update(id_tarea, datos) {
      SET nombre=?, descripcion=?, tipo=?, prioridad=?,
          story_points=?, estimacion_dias=?, fecha_inicio=?, fecha_fin_est=?
      WHERE id_tarea = ?`,
-    [nombre, descripcion, tipo, prioridad,
-     story_points, estimacion_dias, fecha_inicio, fecha_fin_est,
-     id_tarea]
+    [
+      nombre ?? actual.nombre,
+      descripcion ?? actual.descripcion,
+      tipo ?? actual.tipo,
+      prioridad ?? actual.prioridad,
+      story_points ?? actual.story_points,
+      estimacion_dias ?? actual.estimacion_dias,
+      fecha_inicio ?? actual.fecha_inicio,
+      fecha_fin_est ?? actual.fecha_fin_est,
+      id_tarea,
+    ]
   );
   return findById(id_tarea);
 }

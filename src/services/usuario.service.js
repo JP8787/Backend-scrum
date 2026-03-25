@@ -28,9 +28,17 @@ async function findById(id) {
 }
 
 async function update(id, { nombre, telefono, ciudad }) {
+  const actual = await findById(id);
+  if (!actual) return null;
+
   await pool.query(
     `UPDATE usuario SET nombre = ?, telefono = ?, ciudad = ? WHERE id_usuario = ?`,
-    [nombre, telefono, ciudad, id]
+    [
+      nombre ?? actual.nombre,
+      telefono ?? actual.telefono,
+      ciudad ?? actual.ciudad,
+      id,
+    ]
   );
   return findById(id);
 }

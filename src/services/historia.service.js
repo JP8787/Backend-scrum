@@ -63,6 +63,9 @@ async function create(datos) {
 }
 
 async function update(id_historia, datos) {
+  const actual = await findById(id_historia);
+  if (!actual) return null;
+
   const { nombre, descripcion, como_quien, quiero, para,
           prioridad, story_points, estimacion_dias, estado, id_sprint } = datos;
 
@@ -71,9 +74,19 @@ async function update(id_historia, datos) {
      SET nombre=?, descripcion=?, como_quien=?, quiero=?, para=?,
          prioridad=?, story_points=?, estimacion_dias=?, estado=?, id_sprint=?
      WHERE id_historia = ?`,
-    [nombre, descripcion, como_quien, quiero, para,
-     prioridad, story_points, estimacion_dias, estado, id_sprint || null,
-     id_historia]
+    [
+      nombre ?? actual.nombre,
+      descripcion ?? actual.descripcion,
+      como_quien ?? actual.como_quien,
+      quiero ?? actual.quiero,
+      para ?? actual.para,
+      prioridad ?? actual.prioridad,
+      story_points ?? actual.story_points,
+      estimacion_dias ?? actual.estimacion_dias,
+      estado ?? actual.estado,
+      id_sprint ?? actual.id_sprint,
+      id_historia,
+    ]
   );
   return findById(id_historia);
 }

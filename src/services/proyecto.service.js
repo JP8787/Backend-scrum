@@ -65,13 +65,24 @@ async function create(datos, id_creador) {
 }
 
 async function update(id_proyecto, datos) {
+  const actual = await findById(id_proyecto);
+  if (!actual) return null;
+
   const { nombre, descripcion, tipo, estado, fecha_inicio, fecha_fin_est } = datos;
   await pool.query(
     `UPDATE proyecto
      SET nombre = ?, descripcion = ?, tipo = ?, estado = ?,
          fecha_inicio = ?, fecha_fin_est = ?
      WHERE id_proyecto = ?`,
-    [nombre, descripcion, tipo, estado, fecha_inicio, fecha_fin_est, id_proyecto]
+    [
+      nombre ?? actual.nombre,
+      descripcion ?? actual.descripcion,
+      tipo ?? actual.tipo,
+      estado ?? actual.estado,
+      fecha_inicio ?? actual.fecha_inicio,
+      fecha_fin_est ?? actual.fecha_fin_est,
+      id_proyecto,
+    ]
   );
   return findById(id_proyecto);
 }
